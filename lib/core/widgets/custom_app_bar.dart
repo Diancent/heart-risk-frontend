@@ -6,18 +6,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: const Color(0xFF031716), // Колір навбару
+      backgroundColor: const Color(0xFF031716),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Image(
             image: AssetImage('assets/images/heart_logo.png'),
-            width: 29, // Ви можете налаштувати розмір логотипа
+            width: 29,
             height: 39,
           ),
           const SizedBox(width: 8),
           const Text(
-            'HeartRisk AI', // Фіксований заголовок для всіх екранів
+            'HeartRisk AI',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,

@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'config/routes.dart';
 import 'config/theme.dart';
-import 'features/risk_prediction/risk_prediction.dart';
+import 'features/risk_prediction/domain/providers/heart_risk_provider.dart';
 
 void main() {
-  runApp(HeartRiskApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => HeartRiskProvider()),
+      ],
+      child: HeartRiskApp(),
+    ),
+  );
 }
 
 class HeartRiskApp extends StatelessWidget {
@@ -15,7 +24,8 @@ class HeartRiskApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'HeartRisk AI',
       theme: AppTheme.lightTheme,
-      home: const RiskPredictionPage(),
+      onGenerateRoute: AppRoutes.onGenerateRoute,
+      initialRoute: '/',
     );
   }
 }
