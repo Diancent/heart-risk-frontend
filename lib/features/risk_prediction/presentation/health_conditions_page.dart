@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:heart_risk_ai_frontend/core/widgets/custom_footer.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../domain/providers/heart_risk_provider.dart';
@@ -31,85 +32,93 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: SizedBox(
-            width:
-                screenWidth > 600 ? 575 : screenWidth * 0.9, // Адаптуємо ширину
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Card(
-                  color: const Color(0xFFEDEDEE),
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Стан здоров'я",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 10),
-                        RichText(
-                          text: TextSpan(
-                            text: "Навіщо це потрібно?",
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Color(0xFF6CA5C2),
-                              decoration: TextDecoration.underline,
+        child: Column(
+          children: [
+            Center(
+              child: SizedBox(
+                width: screenWidth > 600
+                    ? 575
+                    : screenWidth * 0.9, // Адаптуємо ширину
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Card(
+                      color: const Color(0xFFEDEDEE),
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Стан здоров'я",
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        const Text("Відмітьте пункти, які стосуються вас"),
-                        const SizedBox(height: 10),
-                        // Створюємо контейнер для ListView, щоб уникнути проблем з розмірами
-                        Container(
-                          height: 300, // Фіксована висота
-                          child: ListView.builder(
-                            itemCount: conditions.length,
-                            itemBuilder: (context, index) {
-                              final condition = conditions[index];
-                              return CheckboxListTile(
-                                title: Text(condition),
-                                value: selectedConditions.contains(condition),
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                                contentPadding: EdgeInsets.zero,
-                                activeColor: Color(0xFF0A7075),
-                                onChanged: (value) {
-                                  setState(() {
-                                    if (value == true) {
-                                      selectedConditions.add(condition);
-                                    } else {
-                                      selectedConditions.remove(condition);
-                                    }
-                                    provider.updateHealthConditions(
-                                        selectedConditions);
-                                  });
+                            SizedBox(height: 10),
+                            RichText(
+                              text: TextSpan(
+                                text: "Навіщо це потрібно?",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Color(0xFF6CA5C2),
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            const Text("Відмітьте пункти, які стосуються вас"),
+                            const SizedBox(height: 10),
+                            // Створюємо контейнер для ListView, щоб уникнути проблем з розмірами
+                            Container(
+                              height: 300, // Фіксована висота
+                              child: ListView.builder(
+                                itemCount: conditions.length,
+                                itemBuilder: (context, index) {
+                                  final condition = conditions[index];
+                                  return CheckboxListTile(
+                                    title: Text(condition),
+                                    value:
+                                        selectedConditions.contains(condition),
+                                    controlAffinity:
+                                        ListTileControlAffinity.leading,
+                                    contentPadding: EdgeInsets.zero,
+                                    activeColor: Color(0xFF0A7075),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        if (value == true) {
+                                          selectedConditions.add(condition);
+                                        } else {
+                                          selectedConditions.remove(condition);
+                                        }
+                                        provider.updateHealthConditions(
+                                            selectedConditions);
+                                      });
+                                    },
+                                  );
                                 },
-                              );
-                            },
-                          ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                          ],
                         ),
-                        const SizedBox(height: 20),
-                      ],
+                      ),
                     ),
-                  ),
+                    Positioned(
+                      bottom: -18,
+                      left: 0,
+                      right: 0,
+                      child: _buildButtons(context),
+                    ),
+                  ],
                 ),
-                Positioned(
-                  bottom: -18,
-                  left: 0,
-                  right: 0,
-                  child: _buildButtons(context),
-                ),
-              ],
+              ),
             ),
-          ),
+            SizedBox(height: 100),
+            Footer()
+          ],
         ),
       ),
     );

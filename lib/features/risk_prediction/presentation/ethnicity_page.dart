@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/custom_app_bar.dart';
+import '../../../core/widgets/custom_footer.dart';
 import '../domain/providers/heart_risk_provider.dart';
 
 class EthnicityPage extends StatelessWidget {
@@ -22,55 +23,61 @@ class EthnicityPage extends StatelessWidget {
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: SizedBox(
-            width: 575,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Card(
-                  color: const Color(0xFFEDEDEE),
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      children: [
-                        const Text(
-                          'Оберіть вашу етнічну приналежність. Це допоможе нам краще оцінити ваші ризики для здоров’я:',
-                          style: TextStyle(fontSize: 16),
+        child: Column(
+          children: [
+            Center(
+              child: SizedBox(
+                width: 575,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Card(
+                      color: const Color(0xFFEDEDEE),
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          children: [
+                            const Text(
+                              'Оберіть вашу етнічну приналежність. Це допоможе нам краще оцінити ваші ризики для здоров’я:',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(height: 12),
+                            _buildDropdown(provider, ethnicities),
+                            const SizedBox(height: 30),
+                            const Text(
+                              'Домашня Адреса',
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              'Якщо ви не можете знайти свою адресу, будь ласка, залиште це поле порожнім',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            const SizedBox(height: 5),
+                            _buildAddressField(provider),
+                            const SizedBox(height: 30),
+                          ],
                         ),
-                        const SizedBox(height: 12),
-                        _buildDropdown(provider, ethnicities),
-                        const SizedBox(height: 30),
-                        const Text(
-                          'Домашня Адреса',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          'Якщо ви не можете знайти свою адресу, будь ласка, залиште це поле порожнім',
-                          style: TextStyle(fontSize: 12),
-                        ),
-                        const SizedBox(height: 5),
-                        _buildAddressField(provider),
-                        const SizedBox(height: 30),
-                      ],
+                      ),
                     ),
-                  ),
+                    Positioned(
+                      bottom: -18,
+                      left: 0,
+                      right: 0,
+                      child: _buildButtons(context),
+                    ),
+                  ],
                 ),
-                Positioned(
-                  bottom: -18,
-                  left: 0,
-                  right: 0,
-                  child: _buildButtons(context),
-                ),
-              ],
+              ),
             ),
-          ),
+            SizedBox(height: 100),
+            Footer()
+          ],
         ),
       ),
     );

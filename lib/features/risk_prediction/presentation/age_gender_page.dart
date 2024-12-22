@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/custom_app_bar.dart';
+import '../../../core/widgets/custom_footer.dart';
 import '../domain/providers/heart_risk_provider.dart';
 
 class AgeGenderPage extends StatelessWidget {
@@ -14,17 +15,23 @@ class AgeGenderPage extends StatelessWidget {
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: SizedBox(
-            width: 575,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildInfoCard(provider, context),
-              ],
+        child: Column(
+          children: [
+            Center(
+              child: SizedBox(
+                width: 575,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _buildInfoCard(provider, context),
+                  ],
+                ),
+              ),
             ),
-          ),
+            SizedBox(height: 100),
+            Footer()
+          ],
         ),
       ),
     );

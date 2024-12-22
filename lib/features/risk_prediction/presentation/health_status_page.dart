@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/custom_app_bar.dart';
+import '../../../core/widgets/custom_footer.dart';
 import '../domain/providers/heart_risk_provider.dart';
 
 class HealthStatusPage extends StatelessWidget {
@@ -15,81 +16,90 @@ class HealthStatusPage extends StatelessWidget {
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: SizedBox(
-            width: 575,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Card(
-                  color: const Color(0xFFEDEDEE),
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildRichText('Ви курите?', '(Обов\'язково)'),
-                        const SizedBox(height: 5),
-                        _buildDropdownOption(
-                          values: options,
-                          selectedValue: provider.data.smokes ? "Так" : "Ні",
-                          onChanged: (value) {
-                            provider.updateSmokingStatus(value == "Так");
-                          },
+        child: Column(
+          children: [
+            Center(
+              child: SizedBox(
+                width: 575,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Card(
+                      color: const Color(0xFFEDEDEE),
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildRichText('Ви курите?', '(Обов\'язково)'),
+                            const SizedBox(height: 5),
+                            _buildDropdownOption(
+                              values: options,
+                              selectedValue:
+                                  provider.data.smokes ? "Так" : "Ні",
+                              onChanged: (value) {
+                                provider.updateSmokingStatus(value == "Так");
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            const Text('Чи знаєте ви свій артеріальний тиск?',
+                                style: TextStyle(fontSize: 16)),
+                            const SizedBox(height: 5),
+                            _buildDropdownOption(
+                              values: options,
+                              selectedValue:
+                                  provider.data.bloodPressure?.isNotEmpty ==
+                                          true
+                                      ? "Так"
+                                      : "Ні",
+                              onChanged: (value) {
+                                if (value == "Так") {
+                                  provider.updateBloodPressure('');
+                                } else {
+                                  provider.updateBloodPressure(null);
+                                }
+                              },
+                            ),
+                            if (provider.data.bloodPressure?.isNotEmpty == true)
+                              _buildTextFieldOption(
+                                label: "Артеріальний тиск",
+                                onChanged: provider.updateBloodPressure,
+                              ),
+                            const SizedBox(height: 20),
+                            _buildRichText(
+                                'У вас підвищений рівень холестерину?',
+                                '(Обов\'язково)'),
+                            const SizedBox(height: 5),
+                            _buildDropdownOption(
+                              values: options,
+                              selectedValue:
+                                  provider.data.highCholesterol ? "Так" : "Ні",
+                              onChanged: (value) {
+                                provider.updateHighCholesterol(value == "Так");
+                              },
+                            ),
+                            const SizedBox(height: 30),
+                          ],
                         ),
-                        const SizedBox(height: 20),
-                        const Text('Чи знаєте ви свій артеріальний тиск?',
-                            style: TextStyle(fontSize: 16)),
-                        const SizedBox(height: 5),
-                        _buildDropdownOption(
-                          values: options,
-                          selectedValue:
-                              provider.data.bloodPressure?.isNotEmpty == true
-                                  ? "Так"
-                                  : "Ні",
-                          onChanged: (value) {
-                            if (value == "Так") {
-                              provider.updateBloodPressure('');
-                            } else {
-                              provider.updateBloodPressure(null);
-                            }
-                          },
-                        ),
-                        if (provider.data.bloodPressure?.isNotEmpty == true)
-                          _buildTextFieldOption(
-                            label: "Артеріальний тиск",
-                            onChanged: provider.updateBloodPressure,
-                          ),
-                        const SizedBox(height: 20),
-                        _buildRichText('У вас підвищений рівень холестерину?',
-                            '(Обов\'язково)'),
-                        const SizedBox(height: 5),
-                        _buildDropdownOption(
-                          values: options,
-                          selectedValue:
-                              provider.data.highCholesterol ? "Так" : "Ні",
-                          onChanged: (value) {
-                            provider.updateHighCholesterol(value == "Так");
-                          },
-                        ),
-                        const SizedBox(height: 30),
-                      ],
+                      ),
                     ),
-                  ),
+                    Positioned(
+                      bottom: -18,
+                      left: 0,
+                      right: 0,
+                      child: _buildButtons(context),
+                    ),
+                  ],
                 ),
-                Positioned(
-                  bottom: -18,
-                  left: 0,
-                  right: 0,
-                  child: _buildButtons(context),
-                ),
-              ],
+              ),
             ),
-          ),
+            SizedBox(height: 100),
+            Footer()
+          ],
         ),
       ),
     );

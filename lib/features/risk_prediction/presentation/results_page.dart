@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/custom_app_bar.dart';
+import '../../../core/widgets/custom_footer.dart';
 import '../domain/providers/heart_risk_provider.dart';
 
 class ResultsPage extends StatelessWidget {
@@ -10,7 +11,6 @@ class ResultsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<HeartRiskProvider>(context, listen: false);
 
-    // Наприклад, "вік серця" обчислюється тут
     int heartAge = provider.data.age + 5; // Спрощена логіка
 
     return Scaffold(
@@ -19,7 +19,6 @@ class ResultsPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Text("Ваш вік серця: $heartAge років", style: Theme.of(context).textTheme.headline5),
             Text(
               "Ваш вік серця: $heartAge років",
             ),
@@ -35,6 +34,8 @@ class ResultsPage extends StatelessWidget {
               },
               child: const Text("Повернутися на головну"),
             ),
+            SizedBox(height: 100),
+            Footer()
           ],
         ),
       ),
