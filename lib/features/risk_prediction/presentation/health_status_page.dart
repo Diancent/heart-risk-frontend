@@ -40,46 +40,36 @@ class HealthStatusPage extends StatelessWidget {
                             _buildDropdownOption(
                               values: options,
                               selectedValue:
-                                  provider.data.smokes ? "Так" : "Ні",
+                                  provider.data.isSmoke == 1 ? "Так" : "Ні",
                               onChanged: (value) {
-                                provider.updateSmokingStatus(value == "Так");
+                                provider.updateSmokingStatus(
+                                    value == "Так" ? 1 : 0);
                               },
                             ),
-                            const SizedBox(height: 20),
-                            const Text('Чи знаєте ви свій артеріальний тиск?',
-                                style: TextStyle(fontSize: 16)),
-                            const SizedBox(height: 5),
-                            _buildDropdownOption(
-                              values: options,
-                              selectedValue:
-                                  provider.data.bloodPressure?.isNotEmpty ==
-                                          true
-                                      ? "Так"
-                                      : "Ні",
-                              onChanged: (value) {
-                                if (value == "Так") {
-                                  provider.updateBloodPressure('');
-                                } else {
-                                  provider.updateBloodPressure(null);
-                                }
-                              },
-                            ),
-                            if (provider.data.bloodPressure?.isNotEmpty == true)
-                              _buildTextFieldOption(
-                                label: "Артеріальний тиск",
-                                onChanged: provider.updateBloodPressure,
-                              ),
                             const SizedBox(height: 20),
                             _buildRichText(
-                                'У вас підвищений рівень холестерину?',
-                                '(Обов\'язково)'),
+                                'Ви вживаєте алкоголь?', '(Обов\'язково)'),
                             const SizedBox(height: 5),
                             _buildDropdownOption(
                               values: options,
                               selectedValue:
-                                  provider.data.highCholesterol ? "Так" : "Ні",
+                                  provider.data.isAlco == 1 ? "Так" : "Ні",
                               onChanged: (value) {
-                                provider.updateHighCholesterol(value == "Так");
+                                provider.updateAlcoholStatus(
+                                    value == "Так" ? 1 : 0);
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            _buildRichText(
+                                'Ви фізично активні?', '(Обов\'язково)'),
+                            const SizedBox(height: 5),
+                            _buildDropdownOption(
+                              values: options,
+                              selectedValue:
+                                  provider.data.isActive == 1 ? "Так" : "Ні",
+                              onChanged: (value) {
+                                provider.updateActivityStatus(
+                                    value == "Так" ? 1 : 0);
                               },
                             ),
                             const SizedBox(height: 30),
@@ -145,6 +135,7 @@ class HealthStatusPage extends StatelessWidget {
 
   Widget _buildTextFieldOption({
     required String label,
+    required String initialValue,
     required ValueChanged<String> onChanged,
   }) {
     return TextField(
@@ -155,6 +146,7 @@ class HealthStatusPage extends StatelessWidget {
         isDense: true,
       ),
       keyboardType: TextInputType.number,
+      controller: TextEditingController(text: initialValue),
       onChanged: onChanged,
     );
   }
@@ -180,7 +172,7 @@ class HealthStatusPage extends StatelessWidget {
         ),
         const SizedBox(width: 20),
         ElevatedButton(
-          onPressed: () => Navigator.pushNamed(context, '/healthStatus'),
+          onPressed: () => Navigator.pushNamed(context, '/result'),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF0A7075),
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 17),

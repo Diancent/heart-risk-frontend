@@ -21,7 +21,9 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
     "Я приймаю ліки від тромбів",
     "Нічого з перерахованого"
   ];
-  final List<String> selectedConditions = [];
+
+  // Ініціалізуємо список значень як 0 для кожної умови
+  final List<int> selectedConditions = List.filled(7, 0);
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +73,6 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
                             SizedBox(height: 10),
                             const Text("Відмітьте пункти, які стосуються вас"),
                             const SizedBox(height: 10),
-                            // Створюємо контейнер для ListView, щоб уникнути проблем з розмірами
                             Container(
                               height: 300, // Фіксована висота
                               child: ListView.builder(
@@ -80,22 +81,18 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
                                   final condition = conditions[index];
                                   return CheckboxListTile(
                                     title: Text(condition),
-                                    value:
-                                        selectedConditions.contains(condition),
+                                    value: selectedConditions[index] == 1,
                                     controlAffinity:
                                         ListTileControlAffinity.leading,
                                     contentPadding: EdgeInsets.zero,
                                     activeColor: Color(0xFF0A7075),
                                     onChanged: (value) {
-                                      setState(() {
-                                        if (value == true) {
-                                          selectedConditions.add(condition);
-                                        } else {
-                                          selectedConditions.remove(condition);
-                                        }
-                                        provider.updateHealthConditions(
-                                            selectedConditions);
-                                      });
+                                      // setState(() {
+                                      //   selectedConditions[index] =
+                                      //       value! ? 1 : 0;
+                                      //   provider.updateHealthConditions(
+                                      //       selectedConditions);
+                                      // });
                                     },
                                   );
                                 },

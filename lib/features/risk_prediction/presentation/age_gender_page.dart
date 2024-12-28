@@ -1,16 +1,46 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../core/models/heart_risk_model.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_footer.dart';
 import '../domain/providers/heart_risk_provider.dart';
 
-class AgeGenderPage extends StatelessWidget {
+class AgeGenderPage extends StatefulWidget {
   const AgeGenderPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final provider = Provider.of<HeartRiskProvider>(context, listen: false);
+  _AgeGenderPageState createState() => _AgeGenderPageState();
+}
 
+class _AgeGenderPageState extends State<AgeGenderPage> {
+  final _formKey = GlobalKey<FormState>();
+
+  final List<int> _ages =
+      List.generate(100, (index) => index + 1); // 1 to 100 years
+  final List<int> _weights =
+      List.generate(200, (index) => index + 30); // 30kg to 230kg
+  final List<int> _heights =
+      List.generate(100, (index) => index + 100); // 100cm to 200cm
+
+  int? _selectedAge;
+  int? _selectedWeight;
+  int? _selectedHeight;
+  int? _selectedGender;
+
+  @override
+  void initState() {
+    super.initState();
+    final provider = Provider.of<HeartRiskProvider>(context, listen: false);
+    _selectedAge = provider.data.age;
+    _selectedWeight = provider.data.weight;
+    _selectedHeight = provider.data.height;
+    _selectedGender = provider.data.gender;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<HeartRiskProvider>(context);
     return Scaffold(
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
@@ -20,24 +50,25 @@ class AgeGenderPage extends StatelessWidget {
             Center(
               child: SizedBox(
                 width: 575,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildInfoCard(provider, context),
-                  ],
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      _buildInfoCard(provider),
+                    ],
+                  ),
                 ),
               ),
             ),
-            SizedBox(height: 100),
-            Footer()
+            const SizedBox(height: 100),
+            const Footer()
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoCard(HeartRiskProvider provider, BuildContext context) {
+  Widget _buildInfoCard(HeartRiskProvider provider) {
     return SizedBox(
       width: 575,
       child: Stack(
@@ -57,29 +88,45 @@ class AgeGenderPage extends StatelessWidget {
                   _buildHeaderText(),
                   const SizedBox(height: 12),
                   _buildBulletPoints(),
-                  _buildInputField(
-                    title: 'Вік',
-                    isRequired: true,
-                    child: _buildTextField((value) {}),
-                  ),
+                  _buildGenderPicker(provider),
                   const SizedBox(height: 25),
                   _buildInputField(
-                    title: 'Біологічна стать',
-                    isRequired: true,
-                    extraInfo: 'Навіщо це потрібно?',
-                    child: _buildGenderDropdown(provider),
+                    title: 'Вік',
+                    child: GestureDetector(
+                      onTap: () => _showAgePicker(provider),
+                      child: Text(
+                        _selectedAge != null
+                            ? 'Вік: $_selectedAge'
+                            : 'Виберіть вік',
+                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 25),
                   _buildInputField(
                     title: 'Зріст - см',
-                    subtitle: 'Залиште це поле порожнім, якщо ви не знаєте',
-                    child: _buildTextField((value) {}),
+                    child: GestureDetector(
+                      onTap: () => _showHeightPicker(provider),
+                      child: Text(
+                        _selectedHeight != null
+                            ? 'Зріст: $_selectedHeight см'
+                            : 'Виберіть зріст',
+                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 25),
                   _buildInputField(
                     title: 'Вага - кг',
-                    subtitle: 'Залиште це поле порожнім, якщо ви не знаєте',
-                    child: _buildTextField((value) {}),
+                    child: GestureDetector(
+                      onTap: () => _showWeightPicker(provider),
+                      child: Text(
+                        _selectedWeight != null
+                            ? 'Вага: $_selectedWeight кг'
+                            : 'Виберіть вагу',
+                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -89,7 +136,7 @@ class AgeGenderPage extends StatelessWidget {
             bottom: -18,
             left: 0,
             right: 0,
-            child: _buildButtons(context),
+            child: _buildButtons(context, provider),
           ),
         ],
       ),
@@ -116,95 +163,95 @@ class AgeGenderPage extends StatelessWidget {
     );
   }
 
+  Widget _buildGenderPicker(HeartRiskProvider provider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Стать',
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedGender = 1; // 1 for Male
+                  });
+                  provider.updateGender(1);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  color:
+                      _selectedGender == 1 ? Colors.blue : Colors.transparent,
+                  child: Text(
+                    'Чоловік',
+                    style: TextStyle(
+                      color: _selectedGender == 1 ? Colors.white : Colors.black,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedGender = 2; // 2 for Female
+                  });
+                  provider.updateGender(2);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  color:
+                      _selectedGender == 2 ? Colors.pink : Colors.transparent,
+                  child: Text(
+                    'Жінка',
+                    style: TextStyle(
+                      color: _selectedGender == 2 ? Colors.white : Colors.black,
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _buildInputField({
     required String title,
-    bool isRequired = false,
-    String? subtitle,
-    String? extraInfo,
     required Widget child,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichText(
-          text: TextSpan(
-            text: title,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-            children: isRequired
-                ? [
-                    const TextSpan(
-                      text: ' (Обов\'язково)',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Color(0xFF0A7075),
-                      ),
-                    ),
-                  ]
-                : null,
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        if (extraInfo != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Text(
-              extraInfo,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF6CA5C2),
-                decoration: TextDecoration.underline,
-              ),
-            ),
-          ),
-        if (subtitle != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: Text(
-              subtitle,
-              style: const TextStyle(fontSize: 14, color: Colors.black),
-            ),
-          ),
         const SizedBox(height: 5),
         child,
       ],
     );
   }
 
-  Widget _buildTextField(ValueChanged<String> onChanged) {
-    return TextField(
-      decoration: const InputDecoration(
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        isDense: true,
-        border: OutlineInputBorder(),
-      ),
-      cursorColor: Colors.black,
-      onChanged: onChanged,
-    );
-  }
-
-  Widget _buildGenderDropdown(HeartRiskProvider provider) {
-    return DropdownButtonFormField<String>(
-      value: provider.data.gender.isEmpty ? null : provider.data.gender,
-      onChanged: (value) => provider.updateGender(value!),
-      items: ['Чоловік', 'Жінка']
-          .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-          .toList(),
-      decoration: InputDecoration(
-        labelText: 'Оберіть відповідь',
-        labelStyle: const TextStyle(fontSize: 13),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        isDense: true,
-      ),
-    );
-  }
-
-  Widget _buildButtons(BuildContext context) {
+  Widget _buildButtons(BuildContext context, HeartRiskProvider provider) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -225,10 +272,40 @@ class AgeGenderPage extends StatelessWidget {
         ),
         const SizedBox(width: 20),
         ElevatedButton(
-          onPressed: () => Navigator.pushNamed(context, '/ethnicityAddress'),
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              if (_selectedAge == 0 ||
+                  _selectedHeight == 0 ||
+                  _selectedWeight == 0 ||
+                  _selectedGender == null) {
+                // Вивести повідомлення, якщо значення 0
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Будь ласка, заповніть всі поля коректно!'),
+                  ),
+                );
+              } else {
+                // Якщо всі поля коректні, оновлюємо модель
+                provider.updateData(
+                  age: _selectedAge!,
+                  gender: _selectedGender!,
+                  height: _selectedHeight!,
+                  weight: _selectedWeight!,
+                  isSmoke: 0, // Тут ви можете додати вибір для куріння
+                  isAlco: 0, // Тут ви можете додати вибір для алкоголю
+                  isActive: 0, // Тут ви можете додати вибір для активності
+                  gluc: 0, // Рівень глюкози
+                  cholesterol: 0, // Рівень холестерину
+                  apHi: 0, // Систолічний артеріальний тиск
+                  apLo: 0, // Діастолічний артеріальний тиск
+                );
+                Navigator.pushNamed(context, '/ethnicityAddress');
+              }
+            }
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF0A7075),
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 17),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(31),
             ),
@@ -236,10 +313,88 @@ class AgeGenderPage extends StatelessWidget {
           ),
           child: const Text(
             'Далі',
-            style: TextStyle(fontSize: 18, color: Colors.white),
+            style: TextStyle(fontSize: 16, color: Colors.white),
           ),
         ),
       ],
+    );
+  }
+
+  void _showAgePicker(HeartRiskProvider provider) {
+    showModalBottomSheet<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoPicker(
+          scrollController: FixedExtentScrollController(
+            initialItem: _selectedAge ?? 0,
+          ),
+          itemExtent: 32,
+          onSelectedItemChanged: (index) {
+            setState(() {
+              _selectedAge = _ages[index];
+            });
+            provider.updateAge(_selectedAge!);
+          },
+          children: _ages
+              .map((age) => Text(
+                    age.toString(),
+                    style: const TextStyle(fontSize: 24),
+                  ))
+              .toList(),
+        );
+      },
+    );
+  }
+
+  void _showWeightPicker(HeartRiskProvider provider) {
+    showModalBottomSheet<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoPicker(
+          scrollController: FixedExtentScrollController(
+            initialItem: _selectedWeight ?? 0,
+          ),
+          itemExtent: 32,
+          onSelectedItemChanged: (index) {
+            setState(() {
+              _selectedWeight = _weights[index];
+            });
+            provider.updateWeight(_selectedWeight!);
+          },
+          children: _weights
+              .map((weight) => Text(
+                    weight.toString(),
+                    style: const TextStyle(fontSize: 24),
+                  ))
+              .toList(),
+        );
+      },
+    );
+  }
+
+  void _showHeightPicker(HeartRiskProvider provider) {
+    showModalBottomSheet<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoPicker(
+          scrollController: FixedExtentScrollController(
+            initialItem: _selectedHeight ?? 0,
+          ),
+          itemExtent: 32,
+          onSelectedItemChanged: (index) {
+            setState(() {
+              _selectedHeight = _heights[index];
+            });
+            provider.updateHeight(_selectedHeight!);
+          },
+          children: _heights
+              .map((height) => Text(
+                    height.toString(),
+                    style: const TextStyle(fontSize: 24),
+                  ))
+              .toList(),
+        );
+      },
     );
   }
 }

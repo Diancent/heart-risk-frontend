@@ -1,58 +1,110 @@
 import 'package:flutter/material.dart';
-import '../heart_risk_model.dart';
+import '../../../../core/models/heart_risk_model.dart';
 
 class HeartRiskProvider with ChangeNotifier {
   HeartRiskModel _data = HeartRiskModel();
 
   HeartRiskModel get data => _data;
 
+  // Оновлюємо окремі поля
   void updateAge(int age) {
-    _data.age = age;
-    notifyListeners();
-  }
-
-  void updateGender(String gender) {
-    _data.gender = gender;
-    notifyListeners();
+    if (_data.age != age) {
+      _data.age = age;
+      notifyListeners();
+    }
   }
 
   void updateHeight(int height) {
-    _data.height = height;
-    notifyListeners();
+    if (_data.height != height) {
+      _data.height = height;
+      notifyListeners();
+    }
+  }
+
+  void updateGender(int gender) {
+    if (_data.gender != gender) {
+      _data.gender = gender;
+      notifyListeners();
+    }
   }
 
   void updateWeight(int weight) {
-    _data.weight = weight;
+    if (_data.weight != weight) {
+      _data.weight = weight;
+      notifyListeners();
+    }
+  }
+
+  void updateSmokingStatus(int isSmoke) {
+    _data.isSmoke = isSmoke;
     notifyListeners();
   }
 
-  void updateEthnicity(String ethnicity) {
-    _data.ethnicity = ethnicity;
+  void updateAlcoholStatus(int isAlco) {
+    _data.isAlco = isAlco;
     notifyListeners();
   }
 
-  void updateAddress(String address) {
-    _data.address = address;
+  void updateActivityStatus(int isActive) {
+    _data.isActive = isActive;
     notifyListeners();
   }
 
-  void updateSmokingStatus(bool smokes) {
-    _data.smokes = smokes;
+  void updateGlucoseLevel(int gluc) {
+    _data.gluc = gluc;
     notifyListeners();
   }
 
-  void updateBloodPressure(String? pressure) {
-    _data.bloodPressure = pressure;
+  void updateCholesterolLevel(int cholesterol) {
+    _data.cholesterol = cholesterol;
     notifyListeners();
   }
 
-  void updateHighCholesterol(bool value) {
-    _data.highCholesterol = value;
+  void updateBloodPressure({required int apHi, required int apLo}) {
+    _data.apHi = apHi;
+    _data.apLo = apLo;
     notifyListeners();
   }
 
-  void updateHealthConditions(List<String> conditions) {
-    _data.healthConditions = conditions;
+  // Оновлюємо дані за один раз
+  void updateData({
+    int? age,
+    int? gender,
+    int? height,
+    int? weight,
+    int? isSmoke,
+    int? isAlco,
+    int? isActive,
+    int? gluc,
+    int? cholesterol,
+    int? apHi,
+    int? apLo,
+  }) {
+    if (age != null) _data.age = age;
+    if (gender != null) _data.gender = gender;
+    if (height != null) _data.height = height;
+    if (weight != null) _data.weight = weight;
+    if (isSmoke != null) _data.isSmoke = isSmoke;
+    if (isAlco != null) _data.isAlco = isAlco;
+    if (isActive != null) _data.isActive = isActive;
+    if (gluc != null) _data.gluc = gluc;
+    if (cholesterol != null) _data.cholesterol = cholesterol;
+    if (apHi != null) _data.apHi = apHi;
+    if (apLo != null) _data.apLo = apLo;
+
+    print("Updated HeartRiskModel: ");
+    print("Age: ${_data.age}");
+    print("Gender: ${_data.gender}");
+    print("Height: ${_data.height}");
+    print("Weight: ${_data.weight}");
+    print("Is Smoke: ${_data.isSmoke}");
+    print("Is Alcohol: ${_data.isAlco}");
+    print("Is Active: ${_data.isActive}");
+    print("Glucose Level: ${_data.gluc}");
+    print("Cholesterol Level: ${_data.cholesterol}");
+    print("Systolic Pressure: ${_data.apHi}");
+    print("Diastolic Pressure: ${_data.apLo}");
+
     notifyListeners();
   }
 }

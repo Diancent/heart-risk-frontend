@@ -46,7 +46,7 @@ class EthnicityPage extends StatelessWidget {
                               style: TextStyle(fontSize: 16),
                             ),
                             const SizedBox(height: 12),
-                            _buildDropdown(provider, ethnicities),
+                            // _buildDropdown(provider, ethnicities),
                             const SizedBox(height: 30),
                             const Text(
                               'Домашня Адреса',
@@ -59,7 +59,7 @@ class EthnicityPage extends StatelessWidget {
                               style: TextStyle(fontSize: 12),
                             ),
                             const SizedBox(height: 5),
-                            _buildAddressField(provider),
+                            // _buildAddressField(provider),
                             const SizedBox(height: 30),
                           ],
                         ),
@@ -83,7 +83,7 @@ class EthnicityPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDropdown(HeartRiskProvider provider, List<String> ethnicities) {
+  /*Widget _buildDropdown(HeartRiskProvider provider, List<String> ethnicities) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -120,22 +120,22 @@ class EthnicityPage extends StatelessWidget {
         ),
       ],
     );
-  }
+  }*/
 
-  Widget _buildAddressField(HeartRiskProvider provider) {
-    return TextFormField(
-      onChanged: (value) {
-        provider.updateAddress(value);
-      },
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        isDense: true,
-      ),
-    );
-  }
+  // Widget _buildAddressField(HeartRiskProvider provider) {
+  //   return TextFormField(
+  //     onChanged: (value) {
+  //       provider.updateAddress(value);
+  //     },
+  //     decoration: InputDecoration(
+  //       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  //       border: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(12),
+  //       ),
+  //       isDense: true,
+  //     ),
+  //   );
+  // }
 
   Widget _buildButtons(BuildContext context) {
     return Row(
