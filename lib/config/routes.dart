@@ -15,12 +15,13 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const AgeGenderPage());
       case '/ethnicityAddress':
         return MaterialPageRoute(builder: (_) => const EthnicityPage());
-      case '/lifestyle':
-        return MaterialPageRoute(builder: (_) => const HealthStatusPage());
+      // case '/lifestyle':
+      //   return MaterialPageRoute(builder: (_) => const HealthStatusPage(heartRiskData: null,));
+
       case '/healthStatus':
         return MaterialPageRoute(builder: (_) => const HealthConditionsPage());
-      case '/result':
-        return MaterialPageRoute(builder: (_) => const ResultsPage());
+      // case '/result':
+      //   return MaterialPageRoute(builder: (_) => const ResultsPage(heartRiskData: heartRiskData));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

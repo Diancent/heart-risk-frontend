@@ -58,4 +58,11 @@ class HeartRiskModel {
       'ap_lo': apLo,
     };
   }
+
+  @override
+  String toString() {
+    return 'HeartRiskModel(age: $age, gender: $gender, height: $height, weight: $weight, '
+        'isSmoke: $isSmoke, isAlco: $isAlco, isActive: $isActive, gluc: $gluc, '
+        'cholesterol: $cholesterol, apHi: $apHi, apLo: $apLo)';
+  }
 }

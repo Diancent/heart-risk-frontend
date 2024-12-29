@@ -31,10 +31,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           NavigationItem(title: 'Risk Prediction', onTap: () {}),
           NavigationItem(title: 'About', onTap: () {}),
           NavigationItem(title: 'FAQ', onTap: () {}),
+          SizedBox(width: 145),
 
           const Spacer(),
 
-          OutlinedButton(
+          /*OutlinedButton(
             onPressed: () {},
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: Colors.white, width: 1),
@@ -68,7 +69,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 fontSize: 14,
               ),
             ),
-          ),
+          ),*/
         ],
       ),
       elevation: 0,

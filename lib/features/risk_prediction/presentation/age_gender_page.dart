@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:heart_risk_ai_frontend/features/risk_prediction/presentation/health_status_page.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/heart_risk_model.dart';
 import '../../../core/widgets/custom_app_bar.dart';
@@ -291,15 +292,27 @@ class _AgeGenderPageState extends State<AgeGenderPage> {
                   gender: _selectedGender!,
                   height: _selectedHeight!,
                   weight: _selectedWeight!,
-                  isSmoke: 0, // Тут ви можете додати вибір для куріння
-                  isAlco: 0, // Тут ви можете додати вибір для алкоголю
-                  isActive: 0, // Тут ви можете додати вибір для активності
+                  isSmoke: 0,
+                  isAlco: 0,
+                  isActive: 0,
                   gluc: 0, // Рівень глюкози
                   cholesterol: 0, // Рівень холестерину
                   apHi: 0, // Систолічний артеріальний тиск
                   apLo: 0, // Діастолічний артеріальний тиск
                 );
-                Navigator.pushNamed(context, '/ethnicityAddress');
+
+                final heartRiskData =
+                    provider.data; // отримуємо актуальні дані з провайдера
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        HealthStatusPage(heartRiskData: heartRiskData),
+                  ),
+                );
+
+                print("Test data");
+                print(heartRiskData);
               }
             }
           },

@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../core/models/heart_risk_model.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_footer.dart';
 import '../domain/providers/heart_risk_provider.dart';
 
 class HealthStatusPage extends StatelessWidget {
-  const HealthStatusPage({Key? key}) : super(key: key);
+  final HeartRiskModel heartRiskData;
+
+  const HealthStatusPage({Key? key, required this.heartRiskData})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<HeartRiskProvider>(context);
     final List<String> options = ["Так", "Ні"];
+
+    // Перевірка, чи дані були передані
+    print(heartRiskData);
+    if (heartRiskData != null) {
+      print("Age: ${heartRiskData.age}");
+      print("Gender: ${heartRiskData.gender}");
+      print("Height: ${heartRiskData.height}");
+      print("Weight: ${heartRiskData.weight}");
+    } else {
+      print("Дані не знайдено");
+    }
 
     return Scaffold(
       appBar: CustomAppBar(),
@@ -40,7 +55,7 @@ class HealthStatusPage extends StatelessWidget {
                             _buildDropdownOption(
                               values: options,
                               selectedValue:
-                                  provider.data.isSmoke == 1 ? "Так" : "Ні",
+                                  heartRiskData?.isSmoke == 1 ? "Так" : "Ні",
                               onChanged: (value) {
                                 provider.updateSmokingStatus(
                                     value == "Так" ? 1 : 0);
@@ -53,7 +68,7 @@ class HealthStatusPage extends StatelessWidget {
                             _buildDropdownOption(
                               values: options,
                               selectedValue:
-                                  provider.data.isAlco == 1 ? "Так" : "Ні",
+                                  heartRiskData?.isAlco == 1 ? "Так" : "Ні",
                               onChanged: (value) {
                                 provider.updateAlcoholStatus(
                                     value == "Так" ? 1 : 0);
@@ -66,7 +81,7 @@ class HealthStatusPage extends StatelessWidget {
                             _buildDropdownOption(
                               values: options,
                               selectedValue:
-                                  provider.data.isActive == 1 ? "Так" : "Ні",
+                                  heartRiskData?.isActive == 1 ? "Так" : "Ні",
                               onChanged: (value) {
                                 provider.updateActivityStatus(
                                     value == "Так" ? 1 : 0);
@@ -81,7 +96,7 @@ class HealthStatusPage extends StatelessWidget {
                       bottom: -18,
                       left: 0,
                       right: 0,
-                      child: _buildButtons(context),
+                      child: _buildButtons(context, provider),
                     ),
                   ],
                 ),
@@ -133,25 +148,7 @@ class HealthStatusPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTextFieldOption({
-    required String label,
-    required String initialValue,
-    required ValueChanged<String> onChanged,
-  }) {
-    return TextField(
-      decoration: InputDecoration(
-        labelText: label,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        isDense: true,
-      ),
-      keyboardType: TextInputType.number,
-      controller: TextEditingController(text: initialValue),
-      onChanged: onChanged,
-    );
-  }
-
-  Widget _buildButtons(BuildContext context) {
+  Widget _buildButtons(BuildContext context, HeartRiskProvider provider) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -172,7 +169,15 @@ class HealthStatusPage extends StatelessWidget {
         ),
         const SizedBox(width: 20),
         ElevatedButton(
-          onPressed: () => Navigator.pushNamed(context, '/result'),
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              '/healthStatus',
+              arguments: heartRiskData,
+            );
+            print("sdsdsdsdsdsdsd");
+            print(heartRiskData);
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF0A7075),
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 17),

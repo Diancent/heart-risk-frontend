@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:heart_risk_ai_frontend/core/models/heart_risk_model.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_footer.dart';
 import '../domain/providers/heart_risk_provider.dart';
 
 class ResultsPage extends StatelessWidget {
-  const ResultsPage({Key? key}) : super(key: key);
+  final HeartRiskModel heartRiskData;
+  const ResultsPage({Key? key, required this.heartRiskData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<HeartRiskProvider>(context, listen: false);
+    print("Results page");
+    print(heartRiskData);
 
     int heartAge = provider.data.age + 5; // Спрощена логіка
 
