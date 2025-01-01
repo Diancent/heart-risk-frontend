@@ -22,7 +22,7 @@ class _AgeGenderPageState extends State<AgeGenderPage> {
   final List<int> _weights =
       List.generate(200, (index) => index + 30); // 30kg to 230kg
   final List<int> _heights =
-      List.generate(100, (index) => index + 100); // 100cm to 200cm
+      List.generate(121, (index) => index + 100); // 100cm to 220cm
 
   int? _selectedAge;
   int? _selectedWeight;
@@ -189,8 +189,9 @@ class _AgeGenderPageState extends State<AgeGenderPage> {
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  color:
-                      _selectedGender == 1 ? Colors.blue : Colors.transparent,
+                  color: _selectedGender == 1
+                      ? Color(0xFF0A7075)
+                      : Colors.transparent,
                   child: Text(
                     'Чоловік',
                     style: TextStyle(
@@ -318,7 +319,7 @@ class _AgeGenderPageState extends State<AgeGenderPage> {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF0A7075),
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 17),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(31),
             ),

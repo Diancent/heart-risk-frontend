@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:heart_risk_ai_frontend/core/services/api_service.dart';
 import 'package:heart_risk_ai_frontend/features/risk_prediction/presentation/health_status_page.dart';
 import 'package:heart_risk_ai_frontend/features/risk_prediction/presentation/results_page.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +19,8 @@ class HealthConditionsPage extends StatefulWidget {
 class _HealthConditionsPageState extends State<HealthConditionsPage> {
   final _formKey = GlobalKey<FormState>();
 
-  int? _gluc;
-  int? _cholesterol;
+  int? _gluc = null; // null означає, що рівень глюкози не вибраний
+  int? _cholesterol = null;
   int? _apHi;
   int? _apLo;
 
@@ -27,10 +28,10 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
   void initState() {
     super.initState();
     final provider = Provider.of<HeartRiskProvider>(context, listen: false);
-    _gluc = provider.data.gluc;
-    _cholesterol = provider.data.cholesterol;
-    _apHi = provider.data.apHi;
-    _apLo = provider.data.apLo;
+    _gluc = provider.data.gluc ?? null;
+    _cholesterol = provider.data.cholesterol ?? null;
+    _apHi = provider.data.apHi ?? 120; // Default to 120 if no value is set
+    _apLo = provider.data.apLo ?? 80; // Default to 80 if no value is set
   }
 
   @override
@@ -88,11 +89,21 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
                     title: 'Рівень глюкози',
                     child: GestureDetector(
                       onTap: () => _showGlucPicker(provider),
-                      child: Text(
-                        _gluc != null && _gluc != 0
-                            ? 'Глюкоза: $_gluc'
-                            : 'Виберіть рівень глюкози',
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _gluc == 0
+                                ? 'Виберіть рівень глюкози' // Початковий текст
+                                : _gluc == 1
+                                    ? 'Норма (1.0 - 5.17 ммоль/л)' // Пояснення для норми
+                                    : _gluc == 2
+                                        ? 'Вище норми (5.18 - 6.18 ммоль/л)' // Для трохи вищого рівня
+                                        : 'Значно вище норми (6.21 - 7.21 ммоль/л)', // Для значно вищого рівня
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black54),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -101,11 +112,21 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
                     title: 'Рівень холестерину',
                     child: GestureDetector(
                       onTap: () => _showCholesterolPicker(provider),
-                      child: Text(
-                        _cholesterol != null && _cholesterol != 0
-                            ? 'Холестерин: $_cholesterol'
-                            : 'Виберіть рівень холестерину',
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _cholesterol == 0
+                                ? 'Виберіть рівень холестерину' // If cholesterol is null, show this text
+                                : _cholesterol == 1
+                                    ? 'Норма (3.5 - 5.7 ммоль/л)' // If cholesterol is 1, show 'Норма'
+                                    : _cholesterol == 2
+                                        ? 'Вище норми (5.7 - 6.9 ммоль/л)' // If cholesterol is 2, show 'Вище норми'
+                                        : 'Значно вище норми (7.0 - 10.4 ммоль/л)', // If cholesterol is 3, show 'Значно вище норми'
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black54),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -209,7 +230,7 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
         ),
         const SizedBox(width: 20),
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             if (_formKey.currentState!.validate()) {
               // Check if any value is 0
               if (_gluc == null ||
@@ -218,8 +239,12 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
                   _cholesterol == 0 ||
                   _apHi == null ||
                   _apHi == 0 ||
+                  _apHi! < 50 ||
+                  _apHi! > 300 ||
                   _apLo == null ||
-                  _apLo == 0) {
+                  _apLo == 0 ||
+                  _apLo! < 30 ||
+                  _apLo! > 200) {
                 // Show error if fields are not correctly filled
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -235,27 +260,51 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
                   apLo: _apLo!,
                 );
 
-                final heartRiskData = provider.data;
+                final heartRiskData = provider.data.toJson();
+                print("HeartRisk JSON Data: $heartRiskData");
 
-                // Перетворюємо модель в JSON
-                final heartRiskJson = heartRiskData.toJson();
+                // Перетворюємо модель у JSON
+                // final heartRiskJson = heartRiskData.toJson();
+                // print(
+                //     "HeartRisk JSON Data: $heartRiskJson"); // Логування для перевірки
 
-                // Виводимо JSON дані у консоль (для налагодження)
-                print("HeartRisk JSON Data: $heartRiskJson");
+                try {
+                  final response =
+                      await HeartRiskService().sendHeartRiskData(heartRiskData);
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ResultsPage(heartRiskData: heartRiskData),
-                  ),
-                );
+                  // Перетворення JSON-відповіді у Map
+                  final jsonResponse =
+                      response; // Передбачається, що `response` вже JSON
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ResultsPage(
+                        prediction: jsonResponse['prediction'], // int
+                        diseaseProbability:
+                            jsonResponse['disease_probability'], // double
+                        recommendations: List<String>.from(
+                            jsonResponse['recommendations']), // List<String>
+                      ),
+                    ),
+                  );
+                } catch (e, stacktrace) {
+                  print("Error: $e");
+                  print("Stacktrace: $stacktrace");
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'Помилка під час обробки запиту. Спробуйте пізніше.'),
+                    ),
+                  );
+                }
               }
             }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF0A7075),
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 17),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(31),
             ),
@@ -276,16 +325,20 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
       builder: (BuildContext context) {
         return CupertinoPicker(
           scrollController: FixedExtentScrollController(
-            initialItem: _gluc ?? 0,
+            initialItem: _gluc != null ? _gluc! - 1 : 0,
           ),
           itemExtent: 32,
           onSelectedItemChanged: (index) {
             setState(() {
-              _gluc = index;
+              _gluc = index + 1; // Set the value to 1, 2, or 3
             });
             provider.updateGluc(_gluc!);
           },
-          children: List.generate(200, (index) => Text((index).toString())),
+          children: const [
+            Text('Норма'), // Value 1
+            Text('Вище норми'), // Value 2
+            Text('Значно вище норми'), // Value 3
+          ],
         );
       },
     );
@@ -297,16 +350,20 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
       builder: (BuildContext context) {
         return CupertinoPicker(
           scrollController: FixedExtentScrollController(
-            initialItem: _cholesterol ?? 0,
+            initialItem: _cholesterol != null ? _cholesterol! - 1 : 0,
           ),
           itemExtent: 32,
           onSelectedItemChanged: (index) {
             setState(() {
-              _cholesterol = index;
+              _cholesterol = index + 1; // Set the value to 1, 2, or 3
             });
             provider.updateCholesterol(_cholesterol!);
           },
-          children: List.generate(300, (index) => Text((index).toString())),
+          children: const [
+            Text('Норма'), // Value 1
+            Text('Вище норми'), // Value 2
+            Text('Значно вище норми'), // Value 3
+          ],
         );
       },
     );
@@ -318,16 +375,17 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
       builder: (BuildContext context) {
         return CupertinoPicker(
           scrollController: FixedExtentScrollController(
-            initialItem: _apHi ?? 0,
+            initialItem: _apHi != null ? _apHi! - 50 : 0,
           ),
           itemExtent: 32,
           onSelectedItemChanged: (index) {
             setState(() {
-              _apHi = index;
+              _apHi = index + 50; // Додаємо 50, щоб значення починались з 50
             });
             provider.updateApHi(_apHi!);
           },
-          children: List.generate(200, (index) => Text((index).toString())),
+          children:
+              List.generate(250, (index) => Text((index + 50).toString())),
         );
       },
     );
@@ -339,16 +397,17 @@ class _HealthConditionsPageState extends State<HealthConditionsPage> {
       builder: (BuildContext context) {
         return CupertinoPicker(
           scrollController: FixedExtentScrollController(
-            initialItem: _apLo ?? 0,
+            initialItem: _apLo != null ? _apLo! - 30 : 0,
           ),
           itemExtent: 32,
           onSelectedItemChanged: (index) {
             setState(() {
-              _apLo = index;
+              _apLo = index + 30; // Додаємо 30, щоб значення починались з 30
             });
             provider.updateApLo(_apLo!);
           },
-          children: List.generate(200, (index) => Text((index).toString())),
+          children:
+              List.generate(170, (index) => Text((index + 30).toString())),
         );
       },
     );

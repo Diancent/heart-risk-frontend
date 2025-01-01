@@ -16,6 +16,7 @@ dependencies:
   shared_preferences: ^2.1.0
   flutter_svg: ^2.0.16
   easy_debounce: ^2.0.3
+  http: ^1.2.2
 
   cupertino_icons: ^1.0.8
 

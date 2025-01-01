@@ -102,7 +102,7 @@ class HealthStatusPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 100),
+            SizedBox(height: 265),
             Footer()
           ],
         ),
@@ -175,7 +175,6 @@ class HealthStatusPage extends StatelessWidget {
               '/healthStatus',
               arguments: heartRiskData,
             );
-            print("sdsdsdsdsdsdsd");
             print(heartRiskData);
           },
           style: ElevatedButton.styleFrom(

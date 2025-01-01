@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../features/risk_prediction/presentation/age_gender_page.dart';
 import '../features/risk_prediction/presentation/consent_page.dart';
-import '../features/risk_prediction/presentation/ethnicity_page.dart';
 import '../features/risk_prediction/presentation/health_conditions_page.dart';
 import '../features/risk_prediction/presentation/health_status_page.dart';
 import '../features/risk_prediction/presentation/results_page.dart';
@@ -13,8 +12,6 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const ConsentPage());
       case '/ageGender':
         return MaterialPageRoute(builder: (_) => const AgeGenderPage());
-      case '/ethnicityAddress':
-        return MaterialPageRoute(builder: (_) => const EthnicityPage());
       // case '/lifestyle':
       //   return MaterialPageRoute(builder: (_) => const HealthStatusPage(heartRiskData: null,));
 
